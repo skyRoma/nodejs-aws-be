@@ -1,0 +1,87 @@
+swagger: 2.0
+info:
+  description: This is shop app API
+  version: 1.0.0
+  title: Shop app API
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+host: lzw2g5i2sh.execute-api.eu-west-1.amazonaws.com
+basePath: /dev/
+tags:
+- name: products
+  description: Operations with products
+schemes:
+- https
+paths:
+  /products:
+    get:
+      tags:
+      - products
+      summary: get all products
+      description: |
+        You can get all available products in the system
+      operationId: getProductList
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        "200":
+          description: all products received
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Product'
+  /products/{productid}:
+    get:
+      tags:
+      - products
+      summary: get product by id
+      description: |
+        You can get product by its id
+      operationId: getProductById
+      produces:
+      - application/json
+      - text/plain
+      parameters:
+      - name: productid
+        in: path
+        description: id of the product
+        required: true
+        type: string
+      responses:
+        "200":
+          description: product received
+          schema:
+            $ref: '#/definitions/Product'
+        "404":
+          description: product not found
+          schema:
+            type: string
+            example: Product not found
+definitions:
+  Product:
+    type: object
+    required:
+    - count
+    - description
+    - id
+    - price
+    - title
+    properties:
+      count:
+        type: integer
+        example: 3
+      description:
+        type: string
+        example: Nice product
+      id:
+        type: string
+        format: uuid
+        example: 7567ec4b-b10c-48c5-9345-fc73c48a80aa
+      price:
+        type: integer
+        example: 25
+      title:
+        type: string
+        example: Mobile phone
