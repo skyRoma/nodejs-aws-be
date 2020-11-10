@@ -9,13 +9,15 @@
   "dependencies": {
     "axios": "^0.21.0",
     "pg": "^8.4.2",
-    "source-map-support": "^0.5.10"
+    "source-map-support": "^0.5.10",
+    "yup": "^0.29.3"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.17",
     "@types/node": "^10.12.18",
     "@types/pg": "^7.14.6",
     "@types/serverless": "^1.72.5",
+    "@types/yup": "^0.29.9",
     "@typescript-eslint/eslint-plugin": "^4.6.0",
     "@typescript-eslint/parser": "^4.6.0",
     "eslint": "^7.12.1",

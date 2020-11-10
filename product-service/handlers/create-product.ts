@@ -1,7 +1,7 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
 import 'source-map-support/register';
 
-import { Product } from '../models';
+import { Product, ProductSchema } from '../models';
 import { Client } from 'pg';
 import { dbConfig } from '../../db-config';
 import { createResponse } from '../../helpers';
@@ -18,7 +18,8 @@ export const createProduct: APIGatewayProxyHandler = async ({ body }) => {
   let dbClient: Client;
 
   try {
-    if (isInvalidProductData(JSON.parse(body))) {
+    const isProductValid = await ProductSchema.isValid(JSON.parse(body));
+    if (!isProductValid) {
       throw new Error(invalidProductDataMsg);
     }
     const { title, description, price, count } = JSON.parse(body);
@@ -49,7 +50,9 @@ export const createProduct: APIGatewayProxyHandler = async ({ body }) => {
 
     return createResponse(201, product);
   } catch ({ message }) {
-    await dbClient.query('ROLLBACK');
+    if (dbClient) {
+      await dbClient.query('ROLLBACK');
+    }
 
     if (message === invalidProductDataMsg) {
       return createResponse(400, { message });
@@ -62,21 +65,3 @@ export const createProduct: APIGatewayProxyHandler = async ({ body }) => {
     }
   }
 };
-
-function isInvalidProductData({
-  title,
-  description,
-  price,
-  count,
-}: Product): boolean {
-  return (
-    !isValidValue(title, 'string') ||
-    !isValidValue(description, 'string') ||
-    !isValidValue(price, 'number') ||
-    !isValidValue(count, 'number')
-  );
-}
-
-function isValidValue(value: any, type: string): boolean {
-  return !!value && typeof value === type;
-}
