@@ -13,8 +13,12 @@ const serverlessConfiguration: Serverless = {
       webpackConfig: './webpack.config.js',
       includeModules: true,
     },
+    dotenv: {
+      path: '../.env',
+      basePath: '../',
+    },
   },
-  plugins: ['serverless-webpack'],
+  plugins: ['serverless-webpack', 'serverless-dotenv-plugin'],
   provider: {
     name: 'aws',
     runtime: 'nodejs12.x',
@@ -46,6 +50,18 @@ const serverlessConfiguration: Serverless = {
           http: {
             method: 'get',
             path: 'products/{productId}',
+          },
+        },
+      ],
+    },
+    createProduct: {
+      handler: 'handler.createProduct',
+      events: [
+        {
+          http: {
+            method: 'post',
+            path: 'products',
+            cors: true,
           },
         },
       ],

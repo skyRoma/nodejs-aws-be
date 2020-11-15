@@ -1,17 +1,29 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
 import 'source-map-support/register';
-import axios from 'axios';
 
 import { Product } from '../models';
+import { Client } from 'pg';
+import { dbConfig } from '../../db-config';
+import { createResponse } from '../../helpers';
 
-export const getProductList: APIGatewayProxyHandler = async () => {
-  const products = await axios.get<Product[]>(
-    'https://s3.eu-west-1.amazonaws.com/shop-database/product-list.json'
-  );
+const queryString =
+  'SELECT id, count, price, title, description FROM products INNER JOIN stocks ON id = product_id';
 
-  return {
-    headers: { 'Access-Control-Allow-Origin': '*' },
-    statusCode: 200,
-    body: JSON.stringify(products.data),
-  };
+export const getProductList: APIGatewayProxyHandler = async event => {
+  console.log('event', event);
+  let dbClient: Client;
+
+  try {
+    dbClient = new Client(dbConfig);
+    await dbClient.connect();
+    const { rows } = await dbClient.query<Product>(queryString);
+
+    return createResponse(200, rows);
+  } catch (error) {
+    return createResponse(500, { message: 'Internal Server Error' });
+  } finally {
+    if (dbClient) {
+      dbClient.end();
+    }
+  }
 };
