@@ -1,11 +1,9 @@
 import type { Serverless } from 'serverless/aws';
+import { REGION } from '../constants';
 
 const serverlessConfiguration: Serverless = {
   service: {
     name: 'be-product-service',
-    // app and org for use with dashboard.serverless.com
-    // app: your-app-name,
-    // org: your-org-name,
   },
   frameworkVersion: '2',
   custom: {
@@ -22,7 +20,7 @@ const serverlessConfiguration: Serverless = {
   provider: {
     name: 'aws',
     runtime: 'nodejs12.x',
-    region: 'eu-west-1',
+    region: REGION,
     stage: 'dev',
     apiGateway: {
       minimumCompressionSize: 1024,

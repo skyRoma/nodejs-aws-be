@@ -10,7 +10,7 @@ const axiosMock = axios as jest.Mocked<typeof axios>;
 describe('getProductById', () => {
   axiosMock.get.mockResolvedValue({ data: productsMock });
 
-  test('should return product if it exists', async () => {
+  it('should return product if it exists', async () => {
     const product = productsMock[0];
     const expectedResult = {
       headers: { 'Access-Control-Allow-Origin': '*' },
@@ -29,7 +29,7 @@ describe('getProductById', () => {
     ).toEqual(expectedResult);
   });
 
-  test("should return not-found message if product doesn't exist", async () => {
+  it("should return not-found message if product doesn't exist", async () => {
     const notExistingProductId = 'product-id';
     const expectedResult = {
       headers: { 'Access-Control-Allow-Origin': '*' },
