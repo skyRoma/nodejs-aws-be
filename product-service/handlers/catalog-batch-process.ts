@@ -70,8 +70,7 @@ export const catalogBatchProcess: SQSHandler = async ({ Records }) => {
     await sns
       .publish({
         Subject: 'Products created',
-        Message: `Crated products: ${createdProducts.length},
-        not created products: ${notCreatedProducts.length}`,
+        Message: `Crated products: ${createdProducts.length}, not created products: ${notCreatedProducts.length}`,
         TopicArn: process.env.SNS_ARN,
       })
       .promise();
