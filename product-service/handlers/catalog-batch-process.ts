@@ -72,6 +72,14 @@ export const catalogBatchProcess: SQSHandler = async ({ Records }) => {
         Subject: 'Products created',
         Message: `Crated products: ${createdProducts.length}, not created products: ${notCreatedProducts.length}`,
         TopicArn: process.env.SNS_ARN,
+        MessageAttributes: {
+          isBatchSuccess: {
+            DataType: 'String',
+            StringValue: `${
+              createdProducts.length > notCreatedProducts.length
+            }`,
+          },
+        },
       })
       .promise();
   } catch ({ message }) {

@@ -107,12 +107,26 @@ const serverlessConfiguration: Serverless = {
           TopicName: 'createProductTopic',
         },
       },
-      SNSSubscription: {
+      SNSSuccessBatchSubscription: {
         Type: 'AWS::SNS::Subscription',
         Properties: {
           Endpoint: 'roma.sluka.97@mail.ru',
           Protocol: 'email',
           TopicArn: { Ref: 'SNSTopic' },
+          FilterPolicy: {
+            isBatchSuccess: ['true'],
+          },
+        },
+      },
+      SNSFailedBatchSubscription: {
+        Type: 'AWS::SNS::Subscription',
+        Properties: {
+          Endpoint: 'atatafik@gmail.com',
+          Protocol: 'email',
+          TopicArn: { Ref: 'SNSTopic' },
+          FilterPolicy: {
+            isBatchSuccess: ['false'],
+          },
         },
       },
     },
