@@ -19,6 +19,19 @@ export const importFileParser: S3Handler = ({ Records }) => {
         .pipe(csv())
         .on('data', data => {
           console.log(data);
+          sqs.sendMessage(
+            {
+              QueueUrl: process.env.SQS_QUEUE_URL,
+              MessageBody: JSON.stringify(data),
+            },
+            () => {
+              console.log(
+                `Send message with ${JSON.stringify(data)} to ${
+                  process.env.SQS_QUEUE_URL
+                }`
+              );
+            }
+          );
         })
         .on('end', async () => {
           await s3

@@ -23,6 +23,9 @@ const serverlessConfiguration: Serverless = {
     },
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
+      SQS_QUEUE_URL: {
+        'Fn::ImportValue': 'SQSQueueUrl',
+      },
     },
     iamRoleStatements: [
       {
@@ -34,6 +37,13 @@ const serverlessConfiguration: Serverless = {
         Effect: 'Allow',
         Action: 's3:*',
         Resource: `arn:aws:s3:::${BUCKET_NAME}/*`,
+      },
+      {
+        Effect: 'Allow',
+        Action: 'sqs:*',
+        Resource: {
+          'Fn::ImportValue': 'SQSQueueArn',
+        },
       },
     ],
   },

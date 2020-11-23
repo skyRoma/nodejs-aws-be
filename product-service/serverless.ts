@@ -27,7 +27,22 @@ const serverlessConfiguration: Serverless = {
     },
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
+      SNS_ARN: {
+        Ref: 'SNSTopic',
+      },
     },
+    iamRoleStatements: [
+      {
+        Effect: 'Allow',
+        Action: 'sqs:*',
+        Resource: { 'Fn::GetAtt': ['SQSQueue', 'Arn'] },
+      },
+      {
+        Effect: 'Allow',
+        Action: 'sns:*',
+        Resource: { Ref: 'SNSTopic' },
+      },
+    ],
   },
   functions: {
     getProductsList: {
@@ -63,6 +78,61 @@ const serverlessConfiguration: Serverless = {
           },
         },
       ],
+    },
+    catalogBatchProcess: {
+      handler: 'handler.catalogBatchProcess',
+      events: [
+        {
+          sqs: {
+            batchSize: 5,
+            arn: {
+              'Fn::GetAtt': ['SQSQueue', 'Arn'],
+            },
+          },
+        },
+      ],
+    },
+  },
+  resources: {
+    Resources: {
+      SQSQueue: {
+        Type: 'AWS::SQS::Queue',
+        Properties: {
+          QueueName: 'catalogItemsQueue',
+        },
+      },
+      SNSTopic: {
+        Type: 'AWS::SNS::Topic',
+        Properties: {
+          TopicName: 'createProductTopic',
+        },
+      },
+      SNSSubscription: {
+        Type: 'AWS::SNS::Subscription',
+        Properties: {
+          Endpoint: 'roma.sluka.97@mail.ru',
+          Protocol: 'email',
+          TopicArn: { Ref: 'SNSTopic' },
+        },
+      },
+    },
+    Outputs: {
+      SQSQueueUrl: {
+        Value: {
+          Ref: 'SQSQueue',
+        },
+        Export: {
+          Name: 'SQSQueueUrl',
+        },
+      },
+      SQSQueueArn: {
+        Value: {
+          'Fn::GetAtt': ['SQSQueue', 'Arn'],
+        },
+        Export: {
+          Name: 'SQSQueueArn',
+        },
+      },
     },
   },
 };
