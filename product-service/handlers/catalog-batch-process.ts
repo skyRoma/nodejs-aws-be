@@ -43,10 +43,6 @@ export const catalogBatchProcess: SQSHandler = async ({ Records }) => {
           count,
         ]);
 
-        await dbClient.query<Product>(GET_PRODUCT_BY_ID_QUERY_STRING, [
-          newProductId,
-        ]);
-
         await dbClient.query('COMMIT');
       } catch (error) {
         if (dbClient) {
