@@ -5,13 +5,12 @@ import { Product, ProductSchema } from '../models';
 import { Client } from 'pg';
 import { dbConfig } from '../../db-config';
 import { createResponse } from '../../helpers';
-import { getProductByIdqueryString } from './get-product-by-id';
-
-const createProductQueryString =
-  'INSERT INTO products(title, description, price) VALUES ($1, $2, $3) RETURNING id';
-const createStocktQueryString =
-  'INSERT INTO stocks(product_id, count) VALUES ($1, $2)';
-const invalidProductDataMsg = 'Product data is invalid';
+import {
+  CREATE_PRODUCT_QUERY_STRING,
+  CREATE_STOCK_QUERY_STRING,
+  GET_PRODUCT_BY_ID_QUERY_STRING,
+  INVALID_PRODUCT_DATA_MSG,
+} from '../constants';
 
 export const createProduct: APIGatewayProxyHandler = async ({ body }) => {
   console.log('body: ', body);
@@ -20,7 +19,7 @@ export const createProduct: APIGatewayProxyHandler = async ({ body }) => {
   try {
     const isProductValid = await ProductSchema.isValid(JSON.parse(body));
     if (!isProductValid) {
-      throw new Error(invalidProductDataMsg);
+      throw new Error(INVALID_PRODUCT_DATA_MSG);
     }
     const { title, description, price, count } = JSON.parse(body);
     dbClient = new Client(dbConfig);
@@ -29,20 +28,20 @@ export const createProduct: APIGatewayProxyHandler = async ({ body }) => {
 
     const {
       rows: [{ id: newProductId }],
-    } = await dbClient.query<Product>(createProductQueryString, [
+    } = await dbClient.query<Product>(CREATE_PRODUCT_QUERY_STRING, [
       title,
       description,
       price,
     ]);
 
-    await dbClient.query<Product>(createStocktQueryString, [
+    await dbClient.query<Product>(CREATE_STOCK_QUERY_STRING, [
       newProductId,
       count,
     ]);
 
     const {
       rows: [product],
-    } = await dbClient.query<Product>(getProductByIdqueryString, [
+    } = await dbClient.query<Product>(GET_PRODUCT_BY_ID_QUERY_STRING, [
       newProductId,
     ]);
 
@@ -54,7 +53,7 @@ export const createProduct: APIGatewayProxyHandler = async ({ body }) => {
       await dbClient.query('ROLLBACK');
     }
 
-    if (message === invalidProductDataMsg) {
+    if (message === INVALID_PRODUCT_DATA_MSG) {
       return createResponse(400, { message });
     }
 

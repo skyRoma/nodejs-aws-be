@@ -1,11 +1,12 @@
 import { S3Handler } from 'aws-lambda';
-import { S3 } from 'aws-sdk';
+import { S3, SQS } from 'aws-sdk';
 import { BUCKET_NAME, REGION } from '../../constants';
 import csv from 'csv-parser';
 
 export const importFileParser: S3Handler = ({ Records }) => {
   try {
     const s3 = new S3({ region: REGION });
+    const sqs = new SQS({ region: REGION });
 
     for (const record of Records) {
       const { key: filePath } = record.s3.object;
@@ -18,6 +19,19 @@ export const importFileParser: S3Handler = ({ Records }) => {
         .pipe(csv())
         .on('data', data => {
           console.log(data);
+          sqs.sendMessage(
+            {
+              QueueUrl: process.env.SQS_QUEUE_URL,
+              MessageBody: JSON.stringify(data),
+            },
+            () => {
+              console.log(
+                `Send message with ${JSON.stringify(data)} to ${
+                  process.env.SQS_QUEUE_URL
+                }`
+              );
+            }
+          );
         })
         .on('end', async () => {
           await s3
