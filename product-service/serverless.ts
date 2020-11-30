@@ -110,7 +110,7 @@ const serverlessConfiguration: Serverless = {
       SNSSuccessBatchSubscription: {
         Type: 'AWS::SNS::Subscription',
         Properties: {
-          Endpoint: process.env.SUCCESS_EMAIL,
+          Endpoint: '${env:SUCCESS_EMAIL}',
           Protocol: 'email',
           TopicArn: { Ref: 'SNSTopic' },
           FilterPolicy: {
@@ -121,7 +121,7 @@ const serverlessConfiguration: Serverless = {
       SNSFailedBatchSubscription: {
         Type: 'AWS::SNS::Subscription',
         Properties: {
-          Endpoint: process.env.UNSUCCESS_EMAIL,
+          Endpoint: '${env:UNSUCCESS_EMAIL}',
           Protocol: 'email',
           TopicArn: { Ref: 'SNSTopic' },
           FilterPolicy: {

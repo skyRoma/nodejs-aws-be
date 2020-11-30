@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "lib": ["ES2020"],
+    "removeComments": true,
+    "moduleResolution": "node",
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "sourceMap": true,
+    "allowSyntheticDefaultImports":true,
+    "target": "es2017",
+    "outDir": "lib"
+  },
+  "include": ["./**/*.ts"],
+  "exclude": [
+    "node_modules/**/*",
+    ".serverless/**/*",
+    ".webpack/**/*",
+    "_warmup/**/*",
+    ".vscode/**/*"
+  ]
+}

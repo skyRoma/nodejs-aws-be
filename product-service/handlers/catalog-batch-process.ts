@@ -6,7 +6,6 @@ import { dbConfig } from '../../db-config';
 import {
   CREATE_PRODUCT_QUERY_STRING,
   CREATE_STOCK_QUERY_STRING,
-  GET_PRODUCT_BY_ID_QUERY_STRING,
   INVALID_PRODUCT_DATA_MSG,
 } from '../constants';
 import { Product, ProductSchema } from '../models';

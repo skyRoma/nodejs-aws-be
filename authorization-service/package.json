@@ -1,5 +1,5 @@
 {
-  "name": "import-service",
+  "name": "authorization-service",
   "version": "1.0.0",
   "description": "Serverless webpack example using Typescript",
   "main": "handler.js",
@@ -7,7 +7,6 @@
     "deploy": "sls deploy"
   },
   "dependencies": {
-    "csv-parser": "^2.3.3",
     "source-map-support": "^0.5.10"
   },
   "devDependencies": {
