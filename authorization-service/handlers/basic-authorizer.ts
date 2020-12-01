@@ -19,6 +19,9 @@ export const basicAuthorizer: APIGatewayTokenAuthorizerHandler = (
   try {
     const { authorizationToken, methodArn } = event;
     const encodedCreds = authorizationToken.split(' ')[1];
+    if (!encodedCreds) {
+      cb('Unauthorized');
+    }
     const buff = Buffer.from(encodedCreds, 'base64');
     const [username, password] = buff.toString('utf-8').split(':');
 
