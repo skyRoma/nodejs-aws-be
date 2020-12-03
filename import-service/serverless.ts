@@ -11,8 +11,15 @@ const serverlessConfiguration: Serverless = {
       webpackConfig: './webpack.config.js',
       includeModules: true,
     },
+    dotenv: {
+      path: '../.env',
+      basePath: '../',
+    },
+    basicAuthorizerArn: {
+      'Fn::ImportValue': 'BasicAuthorizerArn',
+    },
   },
-  plugins: ['serverless-webpack'],
+  plugins: ['serverless-webpack', 'serverless-dotenv-plugin'],
   provider: {
     name: 'aws',
     runtime: 'nodejs12.x',
@@ -55,12 +62,21 @@ const serverlessConfiguration: Serverless = {
           http: {
             method: 'get',
             path: '/import',
+            cors: true,
             request: {
               parameters: {
                 querystrings: {
                   name: true,
                 },
               },
+            },
+            authorizer: {
+              name: 'basicAuthorizer',
+              // Or: '${cf:be-authorization-service-${self:provider.stage}.BasicAuthorizerArn}',
+              arn: '${self:custom.basicAuthorizerArn}',
+              resultTtlInSeconds: 0,
+              identitySource: 'method.request.header.Authorization',
+              type: 'token',
             },
           },
         },
@@ -83,6 +99,36 @@ const serverlessConfiguration: Serverless = {
           },
         },
       ],
+    },
+  },
+  resources: {
+    Resources: {
+      GatewayResponseAccessDenied: {
+        Type: 'AWS::ApiGateway::GatewayResponse',
+        Properties: {
+          ResponseParameters: {
+            'gatewayresponse.header.Access-Control-Allow-Origin': "'*'",
+            'gatewayresponse.header.Access-Control-Allow-Headers': "'*'",
+          },
+          ResponseType: 'ACCESS_DENIED',
+          RestApiId: {
+            Ref: 'ApiGatewayRestApi',
+          },
+        },
+      },
+      GatewayResponseUnauthorized: {
+        Type: 'AWS::ApiGateway::GatewayResponse',
+        Properties: {
+          ResponseParameters: {
+            'gatewayresponse.header.Access-Control-Allow-Origin': "'*'",
+            'gatewayresponse.header.Access-Control-Allow-Headers': "'*'",
+          },
+          ResponseType: 'UNAUTHORIZED',
+          RestApiId: {
+            Ref: 'ApiGatewayRestApi',
+          },
+        },
+      },
     },
   },
 };
