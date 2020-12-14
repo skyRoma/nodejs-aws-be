@@ -44,7 +44,7 @@ export class AppController {
         if (this.isCachedRequest(req)) {
           this.cacheService.setCache(response.data);
         }
-        res.json(response.data);
+        res.status(response.status).json(response.data);
       } catch (error) {
         if (error.response) {
           const { status, data } = error.response;
