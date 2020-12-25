@@ -1,5 +1,6 @@
 # IDE
 .vscode
+!.vscode/settings.json
 
 # package directories
 node_modules
@@ -11,4 +12,10 @@ jspm_packages
 # Webpack directories
 .webpack
 
+# Elastic Beanstalk Files
+.elasticbeanstalk
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
+
 .env
+dist
